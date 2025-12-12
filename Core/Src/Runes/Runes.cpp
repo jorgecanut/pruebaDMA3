@@ -81,8 +81,6 @@ SPI::Instance SPI::instance3 = {
     .SS = &PD3,
     .hspi = &hspi3,
     .instance = SPI3,
-    .hdma_tx = DMA::Stream::DMA1Stream5,
-    .hdma_rx = DMA::Stream::DMA1Stream6,
     .baud_rate_prescaler = SPI_BAUDRATEPRESCALER_256,
     .mode = SPI_MODE_MASTER,
     .use_DMA = false};
@@ -228,11 +226,11 @@ vector<uint32_t> channels2 = {};
 vector<uint32_t> channels3 = {};
 
 ADC::InitData init_data1(ADC1, ADC_RESOLUTION_16B, ADC_EXTERNALTRIG_LPTIM1_OUT,
-                         channels1, DMA::Stream::DMA1Stream0, "ADC 1");
+                         channels1, "ADC 1");
 ADC::InitData init_data2(ADC2, ADC_RESOLUTION_16B, ADC_EXTERNALTRIG_LPTIM2_OUT,
-                         channels2, DMA::Stream::DMA1Stream1, "ADC 2");
+                         channels2, "ADC 2");
 ADC::InitData init_data3(ADC3, ADC_RESOLUTION_12B, ADC_EXTERNALTRIG_LPTIM3_OUT,
-                         channels3, DMA::Stream::DMA1Stream2, "ADC 3");
+                         channels3, "ADC 3");
 
 ADC::Peripheral ADC::peripherals[3] = {
     ADC::Peripheral(&hadc1, lptim1, init_data1),
@@ -291,9 +289,7 @@ extern I2C_HandleTypeDef hi2c2;
 I2C::Instance I2C::instance2 = {.SCL = PF1,
                                 .SDA = PB11,
                                 .hi2c = &hi2c2,
-                                .instance = I2C2,
-                                .RX_DMA = DMA::Stream::DMA1Stream3,
-                                .TX_DMA = DMA::Stream::DMA1Stream4};
+                                .instance = I2C2};
 I2C::Peripheral I2C::i2c2 = I2C::Peripheral::peripheral2;
 unordered_map<I2C::Peripheral, I2C::Instance*> I2C::available_i2cs = {
     {I2C::i2c2, &I2C::instance2}};
@@ -308,9 +304,6 @@ unordered_map<uint32_t, uint32_t> I2C::available_speed_frequencies = {
 #ifdef HAL_FMAC_MODULE_ENABLED
 
 MultiplierAccelerator::FMACInstance MultiplierAccelerator::Instance = {
-    .hfmac = &hfmac,
-    .dma_preload = DMA::Stream::DMA2Stream0,
-    .dma_read = DMA::Stream::DMA2Stream1,
-    .dma_write = DMA::Stream::DMA2Stream2,
+    .hfmac = &hfmac
 };
 #endif
