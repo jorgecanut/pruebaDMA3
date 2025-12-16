@@ -1,12 +1,24 @@
 {
     "version": "2.0.0",
     "tasks": [
-      {
-        "label": "Start Debug Server for Simulator on emulated arch",
-        "type": "shell",
-        "command": "ROSETTA_DEBUGSERVER_PORT=1234 ./out/build/latest.elf",
-        "problemMatcher": [],
-        "isBackground": true
-      }
+        {
+            "label": "Start Debug Server for Simulator on emulated arch",
+            "type": "shell",
+            "command": "ROSETTA_DEBUGSERVER_PORT=1234 ./out/build/latest.elf",
+            "problemMatcher": [],
+            "isBackground": true
+        },
+        {
+            "type": "cmake",
+            "label": "CMake:build",
+            "command": "build",
+            "targets": [
+                "all"
+            ],
+            "preset": "nucleo-debug",
+            "group": "build",
+            "problemMatcher": [],
+            "detail": "Tarea compilación plantilla de CMake"
+        }
     ]
   }
