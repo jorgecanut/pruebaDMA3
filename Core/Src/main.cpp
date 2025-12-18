@@ -12,6 +12,10 @@ constexpr DMA_Domain::DMA<DMA_Domain::Stream::dma1_stream0>
 
 int main(void) {
     HAL_Init();
+    [[maybe_unused]]volatile uint32_t active_irq;
+
+    active_irq = (SCB->ICSR & SCB_ICSR_VECTACTIVE_Msk) >> SCB_ICSR_VECTACTIVE_Pos;
+
 
     using myBoard = ST_LIB::Board<mem2mem_dma>;
     myBoard::init();
@@ -26,9 +30,10 @@ int main(void) {
     *dstBuffer = 0x0000;
     *srcBuffer = 0xDEAD;
 
-    dma_direct.start((uint32_t)srcBuffer, (uint32_t)dstBuffer, 1);
+    //dma_direct.start((uint32_t)srcBuffer, (uint32_t)dstBuffer, 1);
+    HAL_DMA_Start_IT(&dma_direct.dma, (uint32_t)srcBuffer, (uint32_t)dstBuffer, 1);
 
-    HAL_DMA_PollForTransfer(&dma_direct.dma, HAL_DMA_FULL_TRANSFER, HAL_MAX_DELAY);
+    //HAL_DMA_PollForTransfer(&dma_direct.dma, HAL_DMA_FULL_TRANSFER, HAL_MAX_DELAY);
     // Wait for completion
     while (HAL_DMA_GetState(&dma_direct.dma) != HAL_DMA_STATE_READY) {
         __NOP();
