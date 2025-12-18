@@ -1,47 +1,43 @@
-#include "HALAL/HALAL.hpp"
+#include "main.h"
 #include "ST-LIB.hpp"
-#include "HALAL/Services/ADC/ADC.hpp"
-#include <stdio.h>
+#include <cstring>
 
 using ST_LIB::DMA_Domain;
 
-constexpr auto dma1_0 = DMA_Domain::DMA<DMA_Domain::Stream::dma1_stream0>(DMA_Domain::Instance::none);
+// Definir una DMA con Instance::none para transferencia memoria a memoria
+constexpr DMA_Domain::DMA<DMA_Domain::Stream::dma1_stream0> 
+    mem2mem_dma{DMA_Domain::Instance::none};
+
+
 
 int main(void) {
-    using myBoard = ST_LIB::Board<dma1_0>;
-    
+    HAL_Init();
+
+    using myBoard = ST_LIB::Board<mem2mem_dma>;
     myBoard::init();
 
-    auto &dma = myBoard::instance_of<dma1_0>();
-    
-   // Memoria NO cacheada y alineada
-    alignas(32) volatile uint32_t* src =
-        (uint32_t*)MPUManager::allocate_non_cached_memory(sizeof(uint32_t));
-    alignas(32) volatile uint32_t* dst =
-        (uint32_t*)MPUManager::allocate_non_cached_memory(sizeof(uint32_t));
 
-    *src = 0xDEADBEEF;
-    *dst = 0x00000000;
+    auto &dma_direct = myBoard::instance_of<mem2mem_dma>();
 
-    // MUY IMPORTANTE: alignment 32 bits
-    dma.start(
-        (uint32_t)src,
-        (uint32_t)dst,
-        1
-    );
-    
-    for (int i = 0; i < 10000000; i++ ){
+
+    volatile uint16_t* srcBuffer = (volatile uint16_t*)MPUManager::allocate_non_cached_memory(16);
+    volatile uint16_t* dstBuffer = (volatile uint16_t*)MPUManager::allocate_non_cached_memory(16);
+
+    *dstBuffer = 0x0000;
+    *srcBuffer = 0xDEAD;
+
+    dma_direct.start((uint32_t)srcBuffer, (uint32_t)dstBuffer, 1);
+
+    HAL_DMA_PollForTransfer(&dma_direct.dma, HAL_DMA_FULL_TRANSFER, HAL_MAX_DELAY);
+    // Wait for completion
+    while (HAL_DMA_GetState(&dma_direct.dma) != HAL_DMA_STATE_READY) {
         __NOP();
     }
-    while (1) {
-        *dst = *dst;
-    }
-    
-    return 0;
-}
 
-void Error_Handler(void) {
-    ErrorHandler("HAL error handler triggered");
+    // Verify transfer
+    [[maybe_unused]]bool success = (*srcBuffer == *dstBuffer);
+
     while (1) {
+        HAL_Delay(1000);
     }
 }
