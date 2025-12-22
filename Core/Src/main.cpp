@@ -8,9 +8,9 @@ using ST_LIB::DMA_Domain;
 constexpr DMA_Domain::DMA<DMA_Domain::Stream::dma1_stream0> 
     mem2mem_dma{DMA_Domain::Instance::none};
 
-extern "C" void DMA1_Stream0_IRQHandler(void) {
-    while(1);
-}
+// extern "C" void DMA1_Stream0_IRQHandler(void) {
+//     while(1);
+// }
 
 int main(void) {
     HAL_Init();
