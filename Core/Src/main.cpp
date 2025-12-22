@@ -8,13 +8,12 @@ using ST_LIB::DMA_Domain;
 constexpr DMA_Domain::DMA<DMA_Domain::Stream::dma1_stream0> 
     mem2mem_dma{DMA_Domain::Instance::none};
 
-
+extern "C" void DMA1_Stream0_IRQHandler(void) {
+    while(1);
+}
 
 int main(void) {
     HAL_Init();
-    [[maybe_unused]]volatile uint32_t active_irq;
-
-    active_irq = (SCB->ICSR & SCB_ICSR_VECTACTIVE_Msk) >> SCB_ICSR_VECTACTIVE_Pos;
 
 
     using myBoard = ST_LIB::Board<mem2mem_dma>;
@@ -24,14 +23,14 @@ int main(void) {
     auto &dma_direct = myBoard::instance_of<mem2mem_dma>();
 
 
-    volatile uint16_t* srcBuffer = (volatile uint16_t*)MPUManager::allocate_non_cached_memory(16);
-    volatile uint16_t* dstBuffer = (volatile uint16_t*)MPUManager::allocate_non_cached_memory(16);
+    uint16_t* srcBuffer = (uint16_t*)MPUManager::allocate_non_cached_memory(16);
+    uint16_t* dstBuffer = (uint16_t*)MPUManager::allocate_non_cached_memory(16);
 
     *dstBuffer = 0x0000;
     *srcBuffer = 0xDEAD;
 
-    //dma_direct.start((uint32_t)srcBuffer, (uint32_t)dstBuffer, 1);
-    HAL_DMA_Start_IT(&dma_direct.dma, (uint32_t)srcBuffer, (uint32_t)dstBuffer, 1);
+    dma_direct.start((uint32_t)srcBuffer, (uint32_t)dstBuffer, 1);
+    //HAL_DMA_Start_IT(&dma_direct.dma, (uint32_t)srcBuffer, (uint32_t)dstBuffer, 1);
 
     //HAL_DMA_PollForTransfer(&dma_direct.dma, HAL_DMA_FULL_TRANSFER, HAL_MAX_DELAY);
     // Wait for completion
@@ -43,6 +42,6 @@ int main(void) {
     [[maybe_unused]]bool success = (*srcBuffer == *dstBuffer);
 
     while (1) {
-        HAL_Delay(1000);
+        HAL_Delay(100);
     }
 }

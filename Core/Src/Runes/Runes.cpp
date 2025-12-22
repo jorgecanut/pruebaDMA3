@@ -1,15 +1,5 @@
 #include "HALAL/HALAL.hpp"
 
-DMA_HandleTypeDef hdma_adc1;
-DMA_HandleTypeDef hdma_adc2;
-DMA_HandleTypeDef hdma_adc3;
-DMA_HandleTypeDef hdma_spi3_rx;
-DMA_HandleTypeDef hdma_spi3_tx;
-DMA_HandleTypeDef hdma_i2c2_rx;
-DMA_HandleTypeDef hdma_i2c2_tx;
-DMA_HandleTypeDef hdma_fmac_preload;
-DMA_HandleTypeDef hdma_fmac_read;
-DMA_HandleTypeDef hdma_fmac_write;
 I2C_HandleTypeDef hi2c2;
 ADC_HandleTypeDef hadc1;
 ADC_HandleTypeDef hadc2;
