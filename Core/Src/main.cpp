@@ -5,12 +5,7 @@
 using ST_LIB::DMA_Domain;
 
 // Definir una DMA con Instance::none para transferencia memoria a memoria
-constexpr DMA_Domain::DMA<DMA_Domain::Stream::dma1_stream0> 
-    mem2mem_dma{DMA_Domain::Instance::none};
-
-// extern "C" void DMA1_Stream0_IRQHandler(void) {
-//     while(1);
-// }
+constexpr DMA_Domain::DMA<DMA_Domain::Stream::dma1_stream0> mem2mem_dma{DMA_Domain::Instance::none};
 
 int main(void) {
     HAL_Init();
